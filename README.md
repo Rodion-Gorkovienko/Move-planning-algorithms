@@ -3,7 +3,7 @@
 
 На Windows запускайте программу Alter_msvcrt.
 
-На Linux запускайте программу Alter_getch.
+На Linux запускайте программу Alter_getch. Дополнительно требуется установить модуль getch (pip install getch).
 
 Готовые схемы содержатся в файлах 1-6.
 
