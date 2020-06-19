@@ -45,12 +45,27 @@ def check_points(a,b,c,d):
 def cross(a, b, c, d):
     return check_pro(a.x, b.x, c.x, d.x) and check_pro(a.x, b.x, c.x, d.x) and area(a,b,c) * area(a,b,d) <= 0 and area(c,d,a) * area(c,d,b) <= 0 and check_points(a,b,c,d)
 
+def on_interval(p,p1,p2):
+    flag=0
+    if (p1.x-p2.x)==0 or (p.x-p2.x)==0:
+        if (p1.x-p2.x)==0 and (p.x-p2.x)==0:
+            if ((p.y-p2.y)*(p1.y-p2.y)>=0):
+                flag=1
+            else:
+                flag=2
+        else:
+            flag=2
+    if flag==0:
+        if (p1.y-p2.y)/(p1.x-p2.x)==(p.y-p2.y)/(p.x-p2.x):
+            flag=1
+    return flag==1
+
 def in_triangle(p, a, b, c):
     ab=Point((a.x+b.x)/2,(a.y+b.y)/2)
     bc=Point((b.x+c.x)/2,(b.y+c.y)/2)
     ca=Point((c.x+a.x)/2,(c.y+a.y)/2)
     flag=0
-    if distance(p,a)+distance(p,b)==distance(a,b) or distance(p,b)+distance(p,c)==distance(b,c) or distance(p,c)+distance(p,a)==distance(c,a):
+    if on_interval(p,a,b) or on_interval(p,b,c) or on_interval(p,c,a):
         flag=1
     return flag==1 or not(cross(p,a,b,c) or cross(p,b,a,c) or cross(p,c,a,b) or cross(p,ab,a,c) or cross(p,ab,c,b) or cross(p,bc,b,a) or cross(p,bc,a,c) or cross(p,ca,c,b) or cross(p,ca,b,a)) 
 
@@ -64,7 +79,7 @@ def in_polygon(p, polygon):
     if chenge_st==0:
         while len(polygonc)>2:
             if in_triangle(p,polygonc[-1],polygonc[-2],polygonc[-3]):
-                if not(distance(p,polygonc[-1])+distance(p,polygonc[-3])==distance(polygonc[-1],polygonc[-3])):
+                if not(on_interval(p,polygonc[-1],polygonc[-3])):
                     chenge_st+=1
             polygonc.pop(-2)
     return chenge_st%2==1
@@ -275,7 +290,7 @@ if choice==1:
     cursor[1].draw(win)
     status=0
     point_a=Point(601,601)
-    point_b=Point(601,601)
+    point_b=Point(601,602)
     point_a.setOutline("green")
     point_b.setOutline("green")
     point_a.draw(win)
@@ -550,7 +565,6 @@ else:
             choice=0
         elif choice==1:
             f.close()
-
 #СОСТАВЛЕНИЕ ГРАФА--------------------------------------------------------------
 print("Построение графа начато...")
 #Очистка списков от пустых многоугольников
@@ -736,8 +750,6 @@ while graph[1].visited==False:
             min=graph[i].value + graph[i].heuristics
             visit=i
     for i in graph[visit].associated:
-        if graph[i].heuristics==-1:
-            graph[i].heuristics=distance(Point(graph[i].x, graph[i].y), point_b)
         if graph[i].visited==False and graph[visit].associated[i] + graph[visit].value < graph[i].value:
             graph[i].value=graph[visit].associated[i]+graph[visit].value
             graph[i].previous=visit
